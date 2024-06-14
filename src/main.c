@@ -50,6 +50,10 @@ int main(int argc, char **argv)
         if (kDown & KEY_START) break;
         if (kDown & KEY_A) cardnum++;
         if (cardnum >= 52) cardnum = 0;
+        if (kDown & KEY_B) {
+            shuffleDeck(deck);
+            cardnum = 0;
+        }
 
         C2D_SpriteSetPos(&deck->cards[cardnum].sprite, SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
         //Draw a frame
