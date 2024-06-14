@@ -8,10 +8,8 @@
 #include "c2d/spritesheet.h"
 #include "deck.h"
 #include "main.h"
-#include "sprites.h"
 
 C2D_SpriteSheet cardsheet;
-C2D_Sprite *cards;
 
 int main(int argc, char **argv)
 {
@@ -30,15 +28,16 @@ int main(int argc, char **argv)
     //Load graphics
     cardsheet = C2D_SpriteSheetLoad("romfs:/gfx/cardsheet.t3x");
     if (!cardsheet) svcBreak(USERBREAK_PANIC);
-    cards = spritesFromSheet(&cardsheet);
 
 
     //Define colours
     u32 clrTable = C2D_Color32(53,101,77,1);
 
-    //Create deck
-    Deck *deck = generateDeck(52);
+    //Create deck from spritesheet
+    Deck *deck = generateDeck(52, &cardsheet);
+    // shuffleDeck(deck);
 
+    uint8_t cardnum = 0;
     // Main loop
     while (aptMainLoop())
     {
@@ -49,15 +48,16 @@ int main(int argc, char **argv)
         u32 kDown = hidKeysDown();
 
         if (kDown & KEY_START) break;
+        if (kDown & KEY_A) cardnum++;
+        if (cardnum >= 52) cardnum = 0;
 
-        uint8_t cardnum = 20;
-        C2D_SpriteSetPos(&cards[cardnum], SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
+        C2D_SpriteSetPos(&deck->cards[cardnum].sprite, SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
         //Draw a frame
         C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
         C2D_TargetClear(top, clrTable);
         C2D_SceneBegin(top);
 
-        C2D_DrawSprite(&cards[cardnum]);
+        C2D_DrawSprite(&deck->cards[cardnum].sprite);
 
         //End frame
         C3D_FrameEnd(0);
@@ -68,7 +68,6 @@ int main(int argc, char **argv)
 
     //Destroy deck
     destroyDeck(deck);
-    destroySprites(cards);
     C3D_Fini();
     C2D_Fini();
     gfxExit();

@@ -1,6 +1,8 @@
 #ifndef DECK_H_GUARD
 #define DECK_H_GUARD
 
+#include "c2d/sprite.h"
+#include "c2d/spritesheet.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include <time.h>
@@ -15,6 +17,7 @@ typedef enum Suits {
 typedef struct Card_s {
     uint8_t rank; //0 = Ace, 1-9 = No. Cards, 10,11,12 = J,Q,K
     Suit suit; //Use enum to define this
+    C2D_Sprite sprite;
 } Card;
 
 typedef struct Deck_s {
@@ -25,7 +28,7 @@ typedef struct Deck_s {
 
 //Function definitions
 
-Deck *generateDeck(uint8_t size);
+Deck *generateDeck(uint8_t size, C2D_SpriteSheet *cardsheet);
 void destroyDeck(Deck *deck);
 void shuffleDeck(Deck *deck);
 char *getRank(Card *card);

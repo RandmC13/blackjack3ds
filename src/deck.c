@@ -1,6 +1,7 @@
 #include "deck.h"
+#include "c2d/sprite.h"
 
-Deck *generateDeck(uint8_t size) {
+Deck *generateDeck(uint8_t size, C2D_SpriteSheet *cardsheet) {
     Deck *deck = malloc(sizeof(Deck));
     if (deck == NULL) return NULL;
 
@@ -18,7 +19,10 @@ Deck *generateDeck(uint8_t size) {
         for (uint8_t rank=0; rank < 13; rank++) {
             deck->cards[i].suit = suit;
             deck->cards[i].rank = rank;
-
+            C2D_SpriteFromSheet(&deck->cards[i].sprite, *cardsheet, i);
+            C2D_SpriteSetCenter(&deck->cards[i].sprite, 0.5f, 0.5f);
+            float scale = 0.99f;
+            C2D_SpriteScale(&deck->cards[i].sprite, scale, scale);
             i++;
         }
     }
