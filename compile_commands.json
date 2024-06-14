@@ -1,0 +1,52 @@
+[
+  {
+    "arguments": [
+      "/opt/devkitpro/devkitARM/bin/arm-none-eabi-gcc",
+      "-g",
+      "-Wall",
+      "-O2",
+      "-ffunction-sections",
+      "-march=armv6k",
+      "-mtune=mpcore",
+      "-mfloat-abi=hard",
+      "-mtp=soft",
+      "-I/home/sam/Programming/3ds-dev/blackjack3ds/include",
+      "-I/opt/devkitpro/libctru/include",
+      "-I/home/sam/Programming/3ds-dev/blackjack3ds/build",
+      "-I/opt/devkitpro/devkitARM/arm-none-eabi/include",
+      "-D__3DS__",
+      "-c",
+      "-o",
+      "deck.o",
+      "/home/sam/Programming/3ds-dev/blackjack3ds/src/deck.c"
+    ],
+    "directory": "/home/sam/Programming/3ds-dev/blackjack3ds/build",
+    "file": "/home/sam/Programming/3ds-dev/blackjack3ds/src/deck.c",
+    "output": "/home/sam/Programming/3ds-dev/blackjack3ds/build/deck.o"
+  },
+  {
+    "arguments": [
+      "/opt/devkitpro/devkitARM/bin/arm-none-eabi-gcc",
+      "-g",
+      "-Wall",
+      "-O2",
+      "-ffunction-sections",
+      "-march=armv6k",
+      "-mtune=mpcore",
+      "-mfloat-abi=hard",
+      "-mtp=soft",
+      "-I/home/sam/Programming/3ds-dev/blackjack3ds/include",
+      "-I/opt/devkitpro/libctru/include",
+      "-I/home/sam/Programming/3ds-dev/blackjack3ds/build",
+      "-I/opt/devkitpro/devkitARM/arm-none-eabi/include",
+      "-D__3DS__",
+      "-c",
+      "-o",
+      "main.o",
+      "/home/sam/Programming/3ds-dev/blackjack3ds/src/main.c"
+    ],
+    "directory": "/home/sam/Programming/3ds-dev/blackjack3ds/build",
+    "file": "/home/sam/Programming/3ds-dev/blackjack3ds/src/main.c",
+    "output": "/home/sam/Programming/3ds-dev/blackjack3ds/build/main.o"
+  }
+]
