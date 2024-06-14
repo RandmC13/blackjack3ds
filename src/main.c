@@ -1,13 +1,16 @@
 #include <3ds.h>
 #include <citro2d.h>
+#include "3ds/svc.h"
 #include "c2d/base.h"
 #include "c2d/sprite.h"
+#include "c2d/spritesheet.h"
 #include "deck.h"
 #include "hand.h"
 #include "main.h"
 #include "draw.h"
 
 C2D_SpriteSheet cardsheet;
+C2D_SpriteSheet back;
 
 int main(int argc, char **argv)
 {
@@ -27,7 +30,8 @@ int main(int argc, char **argv)
     //Load graphics
     cardsheet = C2D_SpriteSheetLoad("romfs:/gfx/cardsheet.t3x");
     if (!cardsheet) svcBreak(USERBREAK_PANIC);
-
+    back = C2D_SpriteSheetLoad("romfs:/gfx/back.t3x");
+    if (!back) svcBreak(USERBREAK_PANIC);
 
     //Define colours
     u32 clrTable = C2D_Color32(53,101,77,1);
@@ -50,6 +54,7 @@ int main(int argc, char **argv)
         u32 kDown = hidKeysDown();
 
         if (kDown & KEY_START) break;
+        if (kDown & KEY_A) addCardToHand(hand, dealCard(deck));
 
         //Begin a frame
         C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
@@ -59,7 +64,8 @@ int main(int argc, char **argv)
 
         //Draw top screen
         C2D_SceneBegin(top);
-        drawHand(hand, &cardsheet, TOP_SCREEN_WIDTH / 2, TOP_SCREEN_HEIGHT - 50);
+        drawDeckPile(deck, &back, (TOP_SCREEN_WIDTH - 50), 50);
+        drawHand(hand, &cardsheet, 20.0f);
 
         //Draw bottom screen
         C2D_SceneBegin(bottom);

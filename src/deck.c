@@ -1,5 +1,6 @@
 #include "deck.h"
 #include "c2d/sprite.h"
+#include "draw.h"
 #include <stdint.h>
 
 Deck *generateDeck(uint8_t size) {
@@ -31,7 +32,7 @@ Deck *generateDeck(uint8_t size) {
 };
 
 void destroyDeck(Deck *deck) {
-    for (uint8_t i = 0; i < deck->size; i++) free(deck->cards[i].sprite);
+    for (uint8_t i = 0; i < deck->size; i++) unloadCardSprite(&deck->cards[i]);
     free(deck->cards);
     free(deck);
 };

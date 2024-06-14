@@ -8,6 +8,7 @@
 
 void loadCardSprite(Card *card, C2D_SpriteSheet *sheet);
 void unloadCardSprite(Card *card);
-void drawHand(Hand *hand, C2D_SpriteSheet *sheet, float x, float y);
+void drawHand(Hand *hand, C2D_SpriteSheet *sheet, float pady);
+void drawDeckPile(Deck *deck, C2D_SpriteSheet *decksheet, float x, float y);
 
 #endif

@@ -1,4 +1,5 @@
 #include "hand.h"
+#include "draw.h"
 #include <stdint.h>
 
 void updateHandTotal(Hand *hand) {
@@ -43,6 +44,7 @@ Hand *generateHand(Card *card1, Card *card2) {
 };
 
 void destroyHand(Hand *hand) {
+    for (uint8_t i = 0; i < hand->size; i++) unloadCardSprite(hand->cards[i]); //Unload all sprites in use
     free(hand->cards); // NOTE: Should be okay to not free individual card pointers as they are freed when the deck is destroyed
     free(hand);
 };
