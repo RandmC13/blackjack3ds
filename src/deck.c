@@ -1,7 +1,8 @@
 #include "deck.h"
 #include "c2d/sprite.h"
+#include <stdint.h>
 
-Deck *generateDeck(uint8_t size, C2D_SpriteSheet *cardsheet) {
+Deck *generateDeck(uint8_t size) {
     Deck *deck = malloc(sizeof(Deck));
     if (deck == NULL) return NULL;
 
@@ -19,10 +20,9 @@ Deck *generateDeck(uint8_t size, C2D_SpriteSheet *cardsheet) {
         for (uint8_t rank=0; rank < 13; rank++) {
             deck->cards[i].suit = suit;
             deck->cards[i].rank = rank;
-            C2D_SpriteFromSheet(&deck->cards[i].sprite, *cardsheet, i);
-            C2D_SpriteSetCenter(&deck->cards[i].sprite, 0.5f, 0.5f);
-            float scale = 0.99f;
-            C2D_SpriteScale(&deck->cards[i].sprite, scale, scale);
+            deck->cards[i].sprite = NULL;
+            deck->cards[i].spriteindex = ((13 * suit) + rank);
+
             i++;
         }
     }
@@ -31,9 +31,11 @@ Deck *generateDeck(uint8_t size, C2D_SpriteSheet *cardsheet) {
 };
 
 void destroyDeck(Deck *deck) {
+    for (uint8_t i = 0; i < deck->size; i++) free(deck->cards[i].sprite);
     free(deck->cards);
     free(deck);
 };
+
 
 void shuffleDeck(Deck *deck) {
     //Fisher-Yates Shuffle
@@ -45,6 +47,13 @@ void shuffleDeck(Deck *deck) {
         deck->cards[r] = temp;
     }
 }
+
+Card *dealCard(Deck *deck) {
+    Card *card = &deck->cards[deck->cardsDealt];
+    deck->cardsDealt++;
+    if (deck->cardsDealt > deck->size) exit(1); //Should never happen just to prevent something going horribly wrong
+    return card;
+};
 
 char *getSuit(Card *card) {
     switch (card->suit) {

@@ -1,13 +1,11 @@
 #include <3ds.h>
 #include <citro2d.h>
-#include <stdio.h>
-#include "3ds/romfs.h"
-#include "3ds/svc.h"
 #include "c2d/base.h"
 #include "c2d/sprite.h"
-#include "c2d/spritesheet.h"
 #include "deck.h"
+#include "hand.h"
 #include "main.h"
+#include "draw.h"
 
 C2D_SpriteSheet cardsheet;
 
@@ -24,6 +22,7 @@ int main(int argc, char **argv)
 
     //Create screens
     C3D_RenderTarget *top = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
+    C3D_RenderTarget *bottom = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
 
     //Load graphics
     cardsheet = C2D_SpriteSheetLoad("romfs:/gfx/cardsheet.t3x");
@@ -34,10 +33,13 @@ int main(int argc, char **argv)
     u32 clrTable = C2D_Color32(53,101,77,1);
 
     //Create deck from spritesheet
-    Deck *deck = generateDeck(52, &cardsheet);
-    // shuffleDeck(deck);
+    Deck *deck = generateDeck(52);
+    shuffleDeck(deck);
+    // Create hand from deck
+    Card *card1 = dealCard(deck);
+    Card *card2 = dealCard(deck);
+    Hand *hand = generateHand(card1, card2);
 
-    uint8_t cardnum = 0;
     // Main loop
     while (aptMainLoop())
     {
@@ -48,21 +50,19 @@ int main(int argc, char **argv)
         u32 kDown = hidKeysDown();
 
         if (kDown & KEY_START) break;
-        if (kDown & KEY_A) cardnum++;
-        if (cardnum >= 52) cardnum = 0;
-        if (kDown & KEY_B) {
-            shuffleDeck(deck);
-            cardnum = 0;
-        }
 
-        C2D_SpriteSetPos(&deck->cards[cardnum].sprite, SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
-        //Draw a frame
+        //Begin a frame
         C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+        //Clear screens
         C2D_TargetClear(top, clrTable);
+        C2D_TargetClear(bottom, clrTable);
+
+        //Draw top screen
         C2D_SceneBegin(top);
+        drawHand(hand, &cardsheet, TOP_SCREEN_WIDTH / 2, TOP_SCREEN_HEIGHT - 50);
 
-        C2D_DrawSprite(&deck->cards[cardnum].sprite);
-
+        //Draw bottom screen
+        C2D_SceneBegin(bottom);
         //End frame
         C3D_FrameEnd(0);
     }
@@ -72,6 +72,10 @@ int main(int argc, char **argv)
 
     //Destroy deck
     destroyDeck(deck);
+
+    //Destroy hands
+    destroyHand(hand);
+
     C3D_Fini();
     C2D_Fini();
     gfxExit();

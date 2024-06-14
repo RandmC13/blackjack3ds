@@ -13,11 +13,11 @@ typedef enum Suits {
     DIAMONDS,
     HEARTS
 } Suit;
-
 typedef struct Card_s {
     uint8_t rank; //0 = Ace, 1-9 = No. Cards, 10,11,12 = J,Q,K
     Suit suit; //Use enum to define this
-    C2D_Sprite sprite;
+    C2D_Sprite *sprite; //Pointer to sprite for the image
+    uint8_t spriteindex; //Index in the spritesheet to find the image
 } Card;
 
 typedef struct Deck_s {
@@ -28,10 +28,11 @@ typedef struct Deck_s {
 
 //Function definitions
 
-Deck *generateDeck(uint8_t size, C2D_SpriteSheet *cardsheet);
+Deck *generateDeck(uint8_t size);
 void destroyDeck(Deck *deck);
 void shuffleDeck(Deck *deck);
 char *getRank(Card *card);
 char *getSuit(Card *card);
+Card *dealCard(Deck *deck);
 
 #endif
