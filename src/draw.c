@@ -18,9 +18,10 @@ void unloadCardSprite(Card *card) {
 };
 
 void drawHand(Hand *hand, C2D_SpriteSheet *sheet, float padY) {
+    loadCardSprite(hand->cards[0], sheet);
     uint8_t cardWidth = hand->cards[0]->sprite->params.pos.w;
     uint8_t cardHeight = hand->cards[0]->sprite->params.pos.h;
-    uint16_t handWidth = ((cardWidth * hand->size) + cardWidth) / 2;
+    uint16_t handWidth = ( cardWidth * (hand->size + 1)) / 2;
     //x and y positions are the centre of the hand
     uint16_t handX = (TOP_SCREEN_WIDTH - handWidth + cardWidth) / 2;
     uint16_t handY = TOP_SCREEN_HEIGHT - (padY + (cardHeight / 2));

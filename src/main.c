@@ -25,7 +25,7 @@ int main(int argc, char **argv)
 
     //Create screens
     C3D_RenderTarget *top = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
-    C3D_RenderTarget *bottom = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
+    // C3D_RenderTarget *bottom = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
 
     //Load graphics
     cardsheet = C2D_SpriteSheetLoad("romfs:/gfx/cardsheet.t3x");
@@ -60,7 +60,7 @@ int main(int argc, char **argv)
         C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
         //Clear screens
         C2D_TargetClear(top, clrTable);
-        C2D_TargetClear(bottom, clrTable);
+        // C2D_TargetClear(bottom, clrTable);
 
         //Draw top screen
         C2D_SceneBegin(top);
@@ -68,7 +68,7 @@ int main(int argc, char **argv)
         drawHand(hand, &cardsheet, 20.0f);
 
         //Draw bottom screen
-        C2D_SceneBegin(bottom);
+        // C2D_SceneBegin(bottom);
         //End frame
         C3D_FrameEnd(0);
     }
@@ -80,7 +80,7 @@ int main(int argc, char **argv)
     destroyDeck(deck);
 
     //Destroy hands
-    destroyHand(hand);
+    // destroyHand(hand);
 
     C3D_Fini();
     C2D_Fini();
