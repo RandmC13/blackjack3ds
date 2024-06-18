@@ -15,6 +15,7 @@
 C2D_SpriteSheet cardsheet;
 C2D_SpriteSheet back;
 C2D_SpriteSheet tableassets;
+C2D_Sprite assets;
 float cardHeight;
 float cardWidth;
 
@@ -41,6 +42,11 @@ int main(int argc, char **argv)
     if (!back) svcBreak(USERBREAK_PANIC);
     tableassets = C2D_SpriteSheetLoad("romfs:/gfx/tableassets.t3x");
     if (!tableassets) svcBreak(USERBREAK_PANIC);
+
+    //Configure table assets
+    C2D_SpriteFromSheet(&assets, tableassets, 0);
+    C2D_SpriteSetCenter(&assets, 0.5f, 0.5f);
+    C2D_SpriteSetPos(&assets, TOP_SCREEN_WIDTH/2, TOP_SCREEN_HEIGHT/2);
 
     //Define colours
     u32 clrTable = C2D_Color32(53,101,77,255);
@@ -97,10 +103,6 @@ int main(int argc, char **argv)
         //Draw top screen
         C2D_SceneBegin(top);
         //Draw table assets
-        C2D_Sprite assets;
-        C2D_SpriteFromSheet(&assets, tableassets, 0);
-        C2D_SpriteSetCenter(&assets, 0.5f, 0.5f);
-        C2D_SpriteSetPos(&assets, TOP_SCREEN_WIDTH/2, TOP_SCREEN_HEIGHT/2);
         C2D_DrawSprite(&assets);
 
         //Draw cards
