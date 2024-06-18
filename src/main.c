@@ -1,5 +1,8 @@
 #include <3ds.h>
 #include <citro2d.h>
+#include "3ds/console.h"
+#include "3ds/gfx.h"
+#include "3ds/services/gspgpu.h"
 #include "3ds/svc.h"
 #include "c2d/base.h"
 #include "c2d/sprite.h"
@@ -11,6 +14,9 @@
 
 C2D_SpriteSheet cardsheet;
 C2D_SpriteSheet back;
+C2D_SpriteSheet tableassets;
+float cardHeight;
+float cardWidth;
 
 int main(int argc, char **argv)
 {
@@ -26,23 +32,44 @@ int main(int argc, char **argv)
     //Create screens
     C3D_RenderTarget *top = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
     // C3D_RenderTarget *bottom = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
+    consoleInit(GFX_BOTTOM, NULL);
 
     //Load graphics
     cardsheet = C2D_SpriteSheetLoad("romfs:/gfx/cardsheet.t3x");
     if (!cardsheet) svcBreak(USERBREAK_PANIC);
     back = C2D_SpriteSheetLoad("romfs:/gfx/back.t3x");
     if (!back) svcBreak(USERBREAK_PANIC);
+    tableassets = C2D_SpriteSheetLoad("romfs:/gfx/tableassets.t3x");
+    if (!tableassets) svcBreak(USERBREAK_PANIC);
 
     //Define colours
-    u32 clrTable = C2D_Color32(53,101,77,1);
+    u32 clrTable = C2D_Color32(53,101,77,255);
 
     //Create deck from spritesheet
     Deck *deck = generateDeck(52);
-    shuffleDeck(deck);
-    // Create hand from deck
-    Card *card1 = dealCard(deck);
-    Card *card2 = dealCard(deck);
-    Hand *hand = generateHand(card1, card2);
+    // shuffleDeck(deck);
+
+    // Grab card dimensions
+    loadCardSprite(&deck->cards[0], &cardsheet);
+    cardHeight = deck->cards[0].sprite->params.pos.h;
+    cardWidth = deck->cards[0].sprite->params.pos.w;
+    unloadCardSprite(&deck->cards[0]);
+
+    // Create player's hand from deck
+    Hand *hand = generateHand(dealCard(deck), dealCard(deck));
+    //Create dealer's hand from deck
+    Hand *dealerHand = generateHand(dealCard(deck), dealCard(deck));
+    char dealerTurn = 0;
+
+    //Define variables for drawing hands and the deck
+    float deckPad = 10.0f;
+    float deckOffset = 0.18f;
+    float handPadding = 5.0f;
+    float dealerPadding = 10.0f;
+
+    //Calculating absolute position for drawing dealer hand next to deck
+    float dealerX = deckPad + cardWidth + (deckOffset*deck->size) + dealerPadding;
+    float dealerY = (deckPad + (deckOffset * deck->size) + 2.0f); // HACK: Don't ask about the +2 it just works
 
     // Main loop
     while (aptMainLoop())
@@ -54,8 +81,13 @@ int main(int argc, char **argv)
         u32 kDown = hidKeysDown();
 
         if (kDown & KEY_START) break;
-        if (kDown & KEY_A) addCardToHand(hand, dealCard(deck));
+        if (kDown & KEY_A && hand->size <= 12) addCardToHand(hand, dealCard(deck));
+        if (kDown & KEY_B && dealerHand->size <= 12) {
+            dealerTurn = !dealerTurn;
+        }
 
+        printf("\x1b[15;6HDealer's score Is: %d", dealerHand->total);
+        printf("\x1b[16;6HPlayer's score Is: %d", hand->total);
         //Begin a frame
         C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
         //Clear screens
@@ -64,8 +96,17 @@ int main(int argc, char **argv)
 
         //Draw top screen
         C2D_SceneBegin(top);
-        drawDeckPile(deck, &back, (TOP_SCREEN_WIDTH - 50), 50);
-        drawHand(hand, &cardsheet, 20.0f);
+        //Draw table assets
+        C2D_Sprite assets;
+        C2D_SpriteFromSheet(&assets, tableassets, 0);
+        C2D_SpriteSetCenter(&assets, 0.5f, 0.5f);
+        C2D_SpriteSetPos(&assets, TOP_SCREEN_WIDTH/2, TOP_SCREEN_HEIGHT/2);
+        C2D_DrawSprite(&assets);
+
+        //Draw cards
+        drawDeckPile(deck, &back, deckOffset, deckPad, deckPad);
+        drawHand(hand, &cardsheet, handPadding);
+        drawDealerHand(dealerHand, &cardsheet, &back, dealerTurn, dealerX, dealerY); //Draw dealer's hand in line with the deck for aestheticness
 
         //Draw bottom screen
         // C2D_SceneBegin(bottom);
@@ -75,12 +116,15 @@ int main(int argc, char **argv)
 
     //Destroy graphics
     C2D_SpriteSheetFree(cardsheet);
+    C2D_SpriteSheetFree(back);
+    C2D_SpriteSheetFree(tableassets);
+
+    //Destroy hands
+    destroyHand(hand);
+    destroyHand(dealerHand);
 
     //Destroy deck
     destroyDeck(deck);
-
-    //Destroy hands
-    // destroyHand(hand);
 
     C3D_Fini();
     C2D_Fini();

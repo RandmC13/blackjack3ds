@@ -1,3 +1,4 @@
 .vscode/
 dockerbuild.sh
-.cache/*
+.cache/
+assets/
