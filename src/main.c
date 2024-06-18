@@ -53,7 +53,7 @@ int main(int argc, char **argv)
 
     //Create deck from spritesheet
     Deck *deck = generateDeck(52);
-    // shuffleDeck(deck);
+    shuffleDeck(deck);
 
     // Grab card dimensions
     loadCardSprite(&deck->cards[0], &cardsheet);
@@ -61,10 +61,13 @@ int main(int argc, char **argv)
     cardWidth = deck->cards[0].sprite->params.pos.w;
     unloadCardSprite(&deck->cards[0]);
 
+    //Deal 4 cards and distribute them alternatingly
+    Card *startingCards[] = {NULL,NULL,NULL,NULL};
+    for (uint8_t i = 0; i < 4; i++) startingCards[i] = dealCard(deck);
     // Create player's hand from deck
-    Hand *hand = generateHand(dealCard(deck), dealCard(deck));
+    Hand *hand = generateHand(startingCards[0], startingCards[2]);
     //Create dealer's hand from deck
-    Hand *dealerHand = generateHand(dealCard(deck), dealCard(deck));
+    Hand *dealerHand = generateHand(startingCards[1], startingCards[3]);
     char dealerTurn = 0;
 
     //Define variables for drawing hands and the deck
