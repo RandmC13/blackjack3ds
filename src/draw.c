@@ -88,6 +88,9 @@ void drawScore(C2D_Text *scoreText, C2D_TextBuf *scoreBuf, char score, char play
 
     //Parse buffer to generate string from score
     char buf[19];
+    //Disable annoying warnings
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-truncation"
     //Thank fuck Dealer's and Player's have the same no. of characters that is amazing
     switch (playerNumber) {
         case 0:
@@ -97,6 +100,8 @@ void drawScore(C2D_Text *scoreText, C2D_TextBuf *scoreBuf, char score, char play
             snprintf(buf, sizeof(char)*19, "Dealer's Score: %d", score);
             break;
     }
+#pragma GCC diagnostic pop
+
     //Parse text object with resulting buffer
     C2D_TextParse(scoreText, *scoreBuf, buf);
     C2D_TextOptimize(scoreText);
