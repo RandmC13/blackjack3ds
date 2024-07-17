@@ -1,8 +1,11 @@
 #include "draw.h"
+#include "c2d/base.h"
 #include "c2d/sprite.h"
 #include "c2d/spritesheet.h"
+#include "c2d/text.h"
 #include "main.h"
 #include <stdint.h>
+#include <stdio.h>
 
 void loadCardSprite(Card *card, C2D_SpriteSheet *sheet) {
     if (card->sprite != NULL) return; //Don't fuck with the card if it is already storing data
@@ -76,3 +79,48 @@ void drawDeckPile(Deck *deck, C2D_SpriteSheet *backsheet, float offset, float pa
         C2D_SpriteMove(&back, offset, -offset);
     }
 };
+
+void drawScore(C2D_Text *scoreText, C2D_TextBuf *scoreBuf, char score, char playerNumber, float padX, float padY, u32 boxColour) {
+    // NOTE: Player number: 0 = player, 1 = dealer
+    //
+    //If total has changed, refresh buffer
+    C2D_TextBufClear(*scoreBuf);
+
+    //Parse buffer to generate string from score
+    char buf[19];
+    //Thank fuck Dealer's and Player's have the same no. of characters that is amazing
+    switch (playerNumber) {
+        case 0:
+            snprintf(buf, sizeof(char)*19, "Player's Score: %d", score);
+            break;
+        default:
+            snprintf(buf, sizeof(char)*19, "Dealer's Score: %d", score);
+            break;
+    }
+    //Parse text object with resulting buffer
+    C2D_TextParse(scoreText, *scoreBuf, buf);
+    C2D_TextOptimize(scoreText);
+
+    //Draw text
+    float scaleX = 0.5f;
+    float scaleY = 0.5f;
+    float boxPadding = 2.0f;
+    float boxThickness = 2.0f;
+    float textWidth, textHeight;
+
+    C2D_TextGetDimensions(scoreText, scaleX, scaleY, &textWidth, &textHeight);
+
+    float boxWidth = textWidth + (2*boxPadding) + (2*boxThickness);
+    float boxHeight = textHeight + (2*boxPadding) + (2*boxThickness);
+    float boxX = (playerNumber) ? TOP_SCREEN_WIDTH - padX - boxWidth : padX;
+    float boxY = TOP_SCREEN_HEIGHT - padY - boxHeight;
+    float textX = boxX + boxThickness + boxPadding;
+    float textY = boxY + boxThickness + boxPadding;
+
+    C2D_DrawText(scoreText, C2D_AlignLeft, textX, textY, 0.0f, scaleX, scaleY);
+    //Draw surrounding box
+    C2D_DrawRectSolid(boxX, boxY, 0.0f, boxWidth, boxThickness, boxColour);
+    C2D_DrawRectSolid(boxX, boxY, 0.0f, boxThickness, boxHeight, boxColour);
+    C2D_DrawRectSolid(boxX, boxY + boxHeight - boxThickness, 0.0f, boxWidth, boxThickness, boxColour);
+    C2D_DrawRectSolid(boxX + boxWidth - boxThickness, boxY, 0.0f, boxThickness, boxHeight, boxColour);
+}

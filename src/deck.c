@@ -56,6 +56,11 @@ Card *dealCard(Deck *deck) {
     return card;
 };
 
+void resetDeck(Deck *deck) {
+    deck->cardsDealt = 0;
+    shuffleDeck(deck);
+}
+
 char *getSuit(Card *card) {
     switch (card->suit) {
     case SPADES:

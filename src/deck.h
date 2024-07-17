@@ -31,6 +31,7 @@ typedef struct Deck_s {
 Deck *generateDeck(uint8_t size);
 void destroyDeck(Deck *deck);
 void shuffleDeck(Deck *deck);
+void resetDeck(Deck *deck);
 char *getRank(Card *card);
 char *getSuit(Card *card);
 Card *dealCard(Deck *deck);
