@@ -11,6 +11,6 @@ void unloadCardSprite(Card *card);
 void drawHand(Hand *hand, C2D_SpriteSheet *sheet, float padY);
 void drawDealerHand(Hand *hand, C2D_SpriteSheet *cardsheet, C2D_SpriteSheet *backsheet, char dealerTurn, float padX, float padY);
 void drawDeckPile(Deck *deck, C2D_SpriteSheet *decksheet, float offset, float padX, float padY);
-void drawScore(C2D_Text *scoreText, C2D_TextBuf *scoreBuf, char score, char playerNumber, float padX, float padY, u32 boxColour);
+void drawScore(C2D_Text *scoreText, C2D_TextBuf *scoreBuf, char score, char playerNumber, float padX, float padY, C2D_Sprite *ui, char uiW, char uiH);
 
 #endif

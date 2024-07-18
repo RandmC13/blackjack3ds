@@ -80,7 +80,7 @@ void drawDeckPile(Deck *deck, C2D_SpriteSheet *backsheet, float offset, float pa
     }
 };
 
-void drawScore(C2D_Text *scoreText, C2D_TextBuf *scoreBuf, char score, char playerNumber, float padX, float padY, u32 boxColour) {
+void drawScore(C2D_Text *scoreText, C2D_TextBuf *scoreBuf, char score, char playerNumber, float padX, float padY, C2D_Sprite *ui, char uiW, char uiH) {
     // NOTE: Player number: 0 = player, 1 = dealer
     //
     //If total has changed, refresh buffer
@@ -107,13 +107,12 @@ void drawScore(C2D_Text *scoreText, C2D_TextBuf *scoreBuf, char score, char play
     C2D_TextOptimize(scoreText);
 
     //Draw text
-    float scaleX = 0.5f;
-    float scaleY = 0.5f;
+    float textScale = 0.5f;
     float boxPadding = 2.0f;
     float boxThickness = 2.0f;
     float textWidth, textHeight;
 
-    C2D_TextGetDimensions(scoreText, scaleX, scaleY, &textWidth, &textHeight);
+    C2D_TextGetDimensions(scoreText, textScale, textScale, &textWidth, &textHeight);
 
     float boxWidth = textWidth + (2*boxPadding) + (2*boxThickness);
     float boxHeight = textHeight + (2*boxPadding) + (2*boxThickness);
@@ -122,10 +121,12 @@ void drawScore(C2D_Text *scoreText, C2D_TextBuf *scoreBuf, char score, char play
     float textX = boxX + boxThickness + boxPadding;
     float textY = boxY + boxThickness + boxPadding;
 
-    C2D_DrawText(scoreText, C2D_AlignLeft, textX, textY, 0.0f, scaleX, scaleY);
     //Draw surrounding box
-    C2D_DrawRectSolid(boxX, boxY, 0.0f, boxWidth, boxThickness, boxColour);
-    C2D_DrawRectSolid(boxX, boxY, 0.0f, boxThickness, boxHeight, boxColour);
-    C2D_DrawRectSolid(boxX, boxY + boxHeight - boxThickness, 0.0f, boxWidth, boxThickness, boxColour);
-    C2D_DrawRectSolid(boxX + boxWidth - boxThickness, boxY, 0.0f, boxThickness, boxHeight, boxColour);
+    float scaleX = boxWidth / uiW;
+    float scaleY = boxHeight / uiH;
+    C2D_SpriteSetScale(ui, scaleX, scaleY);
+    C2D_SpriteSetPos(ui, boxX, boxY);
+    C2D_DrawSprite(ui);
+
+    C2D_DrawText(scoreText, C2D_AlignLeft, textX, textY, 0.0f, textScale, textScale);
 }

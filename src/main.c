@@ -17,7 +17,9 @@
 C2D_SpriteSheet cardsheet;
 C2D_SpriteSheet back;
 C2D_SpriteSheet tableassets;
+C2D_SpriteSheet topui;
 C2D_Sprite assets;
+C2D_Sprite topuiSprite;
 
 //Text objects
 C2D_TextBuf scoresBuf;
@@ -52,15 +54,21 @@ int main(int argc, char **argv)
     if (!back) svcBreak(USERBREAK_PANIC);
     tableassets = C2D_SpriteSheetLoad("romfs:/gfx/tableassets.t3x");
     if (!tableassets) svcBreak(USERBREAK_PANIC);
+    topui = C2D_SpriteSheetLoad("romfs:/gfx/topui.t3x");
+    if (!topui) svcBreak(USERBREAK_PANIC);
 
     //Configure table assets
     C2D_SpriteFromSheet(&assets, tableassets, 0);
     C2D_SpriteSetCenter(&assets, 0.5f, 0.5f);
     C2D_SpriteSetPos(&assets, TOP_SCREEN_WIDTH/2, TOP_SCREEN_HEIGHT/2);
+    //Configure ui elements
+    C2D_SpriteFromSheet(&topuiSprite, topui, 0);
+    C2D_SpriteSetCenter(&topuiSprite, 0.0f, 0.0f);
+    char topuiWidth = topuiSprite.params.pos.w;
+    char topuiHeight = topuiSprite.params.pos.h;
 
     //Define colours
     u32 clrTable = C2D_Color32(53,101,77,255);
-    u32 clrBox = C2D_Color32(26, 66, 46, 255);
 
     //Generate text buffers
     scoresBuf = C2D_TextBufNew(19);
@@ -181,9 +189,9 @@ int main(int argc, char **argv)
             drawHand(hand, &cardsheet, handPadding);
             drawDealerHand(dealerHand, &cardsheet, &back, gameTurn, dealerX, dealerY); //Draw dealer's hand in line with the deck for aestheticness
             //Draw player's score
-            drawScore(&scoresText[0], &scoresBuf, hand->total, 0, 2.0f, 83.0f, clrBox);
+            drawScore(&scoresText[0], &scoresBuf, hand->total, 0, 2.0f, 83.0f, &topuiSprite, topuiWidth, topuiHeight);
             //Draw dealer's score
-            if (gameTurn) drawScore(&scoresText[1], &scoresBuf, dealerHand->total , 1, 2.0f, 83.0f, clrBox);
+            if (gameTurn) drawScore(&scoresText[1], &scoresBuf, dealerHand->total , 1, 2.0f, 83.0f, &topuiSprite, topuiWidth, topuiHeight);
         };
 
         //Draw bottom screen
@@ -199,6 +207,7 @@ int main(int argc, char **argv)
     C2D_SpriteSheetFree(cardsheet);
     C2D_SpriteSheetFree(back);
     C2D_SpriteSheetFree(tableassets);
+    C2D_SpriteSheetFree(topui);
     //Destroy text
     C2D_TextBufDelete(scoresBuf);
 
